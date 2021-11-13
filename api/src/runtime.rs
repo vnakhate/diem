@@ -39,10 +39,12 @@ pub fn bootstrap(
     runtime.spawn(async move {
         let context = Context::new(chain_id, db, mp_sender, role, json_rpc_config, api_config);
         let routes = index::routes(context);
-        if api.address == jsonrpc.address {
-            // Prefer api configuration if possible, although it's likely api and jsonrpc configuration
-            // should be same when the addresses (ip+port) are same.
-            if api.tls_cert_path.is_some() || jsonrpc.tls_cert_path.is_none() {
+        if api.address.port() == jsonrpc.address.port() {
+            // when we rollout api, it's likely there is no api configuration for diem
+            // node, we will load default api configurations (127.0.0.1:8080).
+            // if ip is changed to unspecified, we know it's configured and we should
+            // prefer api web server configuration.
+            if api.address.ip() == jsonrpc.address.ip() || api.address.ip().is_unspecified() {
                 api.serve(routes).await;
             } else {
                 jsonrpc.serve(routes).await;
