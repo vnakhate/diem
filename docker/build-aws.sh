@@ -2,7 +2,7 @@
 # Copyright (c) The Diem Core Contributors
 # SPDX-License-Identifier: Apache-2.0
 # build-aws-base.sh is a common script shared by mutiple build-aws.sh scripts
-
+set -x 
 NON_RETRY_EXIT_CODE=1
 RETRYABLE_EXIT_CODE=2
 
